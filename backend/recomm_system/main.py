@@ -2,7 +2,7 @@ import sys
 import torch
 sys.path.append("E:/my_projects/backend")
 from recomm_system.gnn_model import GNNRecommender
-from recomm_system.load_data import load_datasets
+from load_data import load_datasets
 from recomm_system.preprocess import preprocess_data, create_graph_data
 from recomm_system.hybrid_recommender import hybrid_recommend
 

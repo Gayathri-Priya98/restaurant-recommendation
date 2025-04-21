@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import os
 from sklearn.metrics.pairwise import cosine_similarity
-from recomm_system.load_data import load_datasets
+from .load_data import load_datasets
 from recomm_system.hybrid_recommender import hybrid_recommend
 
 def get_recommendations(user_id, lat, lng, query):
