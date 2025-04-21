@@ -19,7 +19,7 @@ def main():
     print(graph_data)
 
     input_dim = graph_data.x.shape[1]
-    model = GNNRecommender(input_dim=input_dim, hidden_dim=16, output_dim=16)
+    model = GNNRecommender(input_dim=16, hidden_dim=16, output_dim=16)
     model.load_state_dict(torch.load("gnn_recommender.pth"))  # Load model weights
     model.eval()
     # Hybrid recommendation

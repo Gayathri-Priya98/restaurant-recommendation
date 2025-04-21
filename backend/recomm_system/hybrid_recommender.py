@@ -30,7 +30,7 @@ def hybrid_recommend(user_id, business_df, review_df, user_df, model, graph_data
 
     # Get business node embeddings (business nodes come after user nodes in the graph)
     offset = len(user_df)
-    business_embeddings = all_embeddings[offset:].numpy()
+    business_embeddings = all_embeddings[offset:].detach().numpy()
 
     # Compute cosine similarity between user and all businesses
     similarities = cosine_similarity(user_embedding, business_embeddings)

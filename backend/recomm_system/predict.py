@@ -1,7 +1,9 @@
 import pandas as pd
 import torch
 import torch.nn as nn
-from recomm_system.gnn_model import GNNRecommender  
+import sys
+sys.path.append('E:\\my_projects\\backend')
+from recomm_system.gnn_model import GNNRecommender
 
 # Load Business Dataset
 business_df = pd.read_csv("E:/my_projects/yelp_dataset/business.csv")
@@ -16,8 +18,8 @@ if 'categories' in business_df.columns:
     business_df = business_df[business_df['categories'].str.contains("Restaurant|Food", na=False, case=False)]
 
 # Load GNN Model
-model = GNNRecommender()
-model.load_state_dict(torch.load("E:/my_projects/web/recomm_system/gnn_recommender.pth"))
+model = GNNRecommender(input_dim=16, hidden_dim=16, output_dim=16)
+model.load_state_dict(torch.load("E:/my_projects/backend/recomm_system/gnn_recommender.pth"), strict=False)
 model.eval()
 
 # Get recommendations (Assume `user_id` is given)
