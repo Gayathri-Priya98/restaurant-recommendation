@@ -6,6 +6,7 @@ import torch
 import folium
 
 def hybrid_recommend(user_id, business_df, review_df, user_df, model, graph_data):
+    model.eval()
     """
     Hybrid recommendation combining GNN, content-based & popularity-based approaches.
     """
@@ -20,22 +21,29 @@ def hybrid_recommend(user_id, business_df, review_df, user_df, model, graph_data
     
     user_idx = user_ids.index(user_id)
     
-    model.eval()
     with torch.no_grad():
         user_embedding = model(graph_data.x, graph_data.edge_index)[user_idx].numpy().reshape(1, -1)
-    print("✅ User Embedding Generated:", user_embedding.shape)
+        print("✅ User Embedding Generated:", user_embedding.shape)
     
-    business_embeddings = np.random.rand(len(business_df), user_embedding.shape[1])
+      # Get all embeddings from the GNN
+    all_embeddings = model(graph_data.x, graph_data.edge_index)
+
+    # Get business node embeddings (business nodes come after user nodes in the graph)
+    offset = len(user_df)
+    business_embeddings = all_embeddings[offset:].numpy()
+
+    # Compute cosine similarity between user and all businesses
     similarities = cosine_similarity(user_embedding, business_embeddings)
-    
+
     top_indices = similarities.argsort()[0][-10:][::-1]
     content_based_recommendations = business_df.iloc[top_indices]
 
     popular_businesses = business_df.sort_values(by=["stars", "business_review_count"], ascending=[False, False]).head(10)
-
     hybrid_recommendations = pd.concat([content_based_recommendations, popular_businesses]).drop_duplicates().head(5)
 
-    print(f"✅ Hybrid Recommendations for User {user_id} Generated!")
+    if "business_id" not in hybrid_recommendations.columns:
+        print("❌ 'business_id' column missing in hybrid_recommendations!")
+        return None
     recommended_df = business_df[business_df["business_id"].isin(hybrid_recommendations["business_id"])]
     recommended_df = recommended_df[["business_id", "name", "latitude", "longitude"]]
     recommended_df["name"] = recommended_df["name"].replace(0, "Unknown").fillna("Unknown")
