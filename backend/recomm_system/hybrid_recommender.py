@@ -38,7 +38,9 @@ def hybrid_recommend(user_id, business_df, review_df, user_df, model, graph_data
     top_indices = similarities.argsort()[0][-10:][::-1]
     content_based_recommendations = business_df.iloc[top_indices]
 
-    popular_businesses = business_df.sort_values(by=["stars", "business_review_count"], ascending=[False, False]).head(10)
+    popular_businesses = business_df.sort_values(by=["stars", "business_review_count"], 
+                                                 ascending=[False, False]).head(10)
+    
     hybrid_recommendations = pd.concat([content_based_recommendations, popular_businesses]).drop_duplicates().head(5)
 
     if "business_id" not in hybrid_recommendations.columns:
