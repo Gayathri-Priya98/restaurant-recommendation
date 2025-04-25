@@ -56,7 +56,7 @@ function App() {
           lat: position.coords.latitude,
           lng: position.coords.longitude
         };
-        console.log("📍 User Location:", userLoc); // ✅ correct
+        console.log("📍 User Location:", userLoc); 
         setLocation(userLoc);
       },
       (error) => {
@@ -169,7 +169,7 @@ function App() {
         <p>No results yet. Try searching something!</p>
       )}
 
-      <footer>Built with ❤️ by You</footer>
+      <footer>Built with ❤️ </footer>
     </div>
   );
 }

@@ -16,17 +16,35 @@ function Map() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
 
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      setLocation({
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      });
-    }, (err) => {
-      console.error("Location Error:", err);
-    });
-  }, []);
+  // Function to load Google Maps API asynchronously
+  const loadGoogleMaps = () => {
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places&callback=initMap`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+  };
 
+  // Initialize location and Google Maps API when component mounts
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const userLoc = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        console.log("📍 User Location:", userLoc); // Show the full object to confirm
+        setLocation(userLoc);
+      },
+      (error) => {
+        console.error("Location access denied or error!", error);
+        alert("Location permission required to get nearby restaurants.");
+      }
+    );
+  }, []);
+  
+
+  // Handle search
   const handleSearch = async () => {
     if (!location.lat || !location.lng || !query) return;
 
@@ -47,7 +65,7 @@ function Map() {
   return (
     <div className="map-container">
       <div className="map-section">
-        {/* Search bar as overlay on map */}
+        {/* Search bar overlay */}
         <div className="search-bar-overlay">
           <input
             type="text"
@@ -58,7 +76,7 @@ function Map() {
           <button onClick={handleSearch}>Search</button>
         </div>
 
-        {/* MAP */}
+        {/* Map */}
         {location.lat && location.lng && (
           <MapContainer
             center={[location.lat, location.lng]}
